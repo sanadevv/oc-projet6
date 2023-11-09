@@ -1,5 +1,5 @@
 const gallery = document.querySelector(".gallery");
-
+const modalGallery = document.querySelector(".modal-gallery");
 fetch("http://localhost:5678/api/works")
   .then((response) => response.json())
   .then((data) => {
@@ -113,6 +113,83 @@ window.addEventListener("load", () => {
     modifyDiv.appendChild(modifyIcon);
     modifyDiv.appendChild(modifyBtn);
 
-    modifyDiv.addEventListener("click", () => {});
+    const modal = document.querySelector("dialog");
+    // modal.classList.add("modal");
+    // gallery.appendChild(modal);
+
+    const closeModal = document.querySelector(".close-modal");
+    // closeModal.classList.add("fa-solid");
+    // closeModal.classList.add("fa-xmark");
+    // closeModal.classList.add("close-modal");
+    // modal.appendChild(closeModal);
+
+    const modalGallery = document.querySelector(".modal-gallery");
+    // modalGallery.classList.add("modal-gallery");
+    // modal.appendChild(modalGallery);
+
+    const btnAdd = document.querySelector(".btn-add");
+    // btnAdd.classList.add("btn-add");
+    // btnAdd.textContent = "Ajouter une photo";
+    // modal.appendChild(btnAdd);
+
+    modifyDiv.addEventListener("click", () => {
+      modal.showModal();
+    });
+    closeModal.addEventListener("click", () => {
+      modal.close();
+    });
+
+    fetch("http://localhost:5678/api/works")
+      .then((response) => response.json())
+      .then((data) => {
+        createGallery(data);
+      })
+
+      .catch((error) => {
+        console.error(error);
+      });
+
+    // fonction pour créer la galerie dynamiquement
+    function createGallery(data) {
+      data.forEach((work) => {
+        const image = document.createElement("img");
+        image.src = work.imageUrl;
+
+        const figure = document.createElement("figure");
+        figure.dataset.category = work.categoryId;
+
+        const trashIcon = document.createElement("i");
+        trashIcon.classList.add("fa-solid");
+        trashIcon.classList.add("fa-trash-can");
+
+        figure.appendChild(image);
+        figure.appendChild(trashIcon);
+        modalGallery.appendChild(figure);
+
+        // trashIcon.addEventListener("click", () => {
+        //   fetch("http://localhost:5678/api/works/1", {
+        //     method: "DELETE",
+        //     headers: {
+        //       "content-type": "application/json",
+        //     },
+        //     body: JSON.stringify(),
+        //   })
+        //     .then((response) => response.json())
+        //     .then((data) => {
+        //       deletework(data);
+        //     });
+        // });
+        // function deletework(data) {
+        //   data.forEach((work) => {
+        //     this;
+        //   });
+        // }
+      });
+    }
+    const modalAddPhoto = document.querySelector(".modal-add");
+    btnAdd.addEventListener("click", () => {
+      modalAddPhoto.showModal();
+      modal.close();
+    });
   }
 });
