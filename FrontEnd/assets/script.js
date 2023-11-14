@@ -1,5 +1,6 @@
 const gallery = document.querySelector(".gallery");
 const modalGallery = document.querySelector(".modal-gallery");
+// *******creation de la galerie******
 fetch("http://localhost:5678/api/works")
   .then((response) => response.json())
   .then((data) => {
@@ -24,6 +25,7 @@ function createGallery(data) {
     gallery.appendChild(figure);
   });
 }
+// ******creation des filtres******
 fetch("http://localhost:5678/api/categories")
   .then((response) => response.json())
   .then((data) => {
@@ -75,10 +77,12 @@ function setActiveButton() {
   this.classList.add("selected");
   this.classList.remove("not-selected");
 }
+// ******la page d'acceuil aprés la connexion de l'administrateur******
 window.addEventListener("load", () => {
   const token = sessionStorage.getItem("authToken");
 
   if (token) {
+    // modification de la page d'acceuil aprés connexion
     document.getElementById("filtres").style.display = "none";
 
     const login = document.querySelector(".login");
@@ -112,25 +116,14 @@ window.addEventListener("load", () => {
     modifyIcon.classList.add("fa-pen-to-square");
     modifyDiv.appendChild(modifyIcon);
     modifyDiv.appendChild(modifyBtn);
-
+    // la modal suppression des traveaux
     const modal = document.querySelector("dialog");
-    // modal.classList.add("modal");
-    // gallery.appendChild(modal);
 
     const closeModal = document.querySelector(".close-modal");
-    // closeModal.classList.add("fa-solid");
-    // closeModal.classList.add("fa-xmark");
-    // closeModal.classList.add("close-modal");
-    // modal.appendChild(closeModal);
 
     const modalGallery = document.querySelector(".modal-gallery");
-    // modalGallery.classList.add("modal-gallery");
-    // modal.appendChild(modalGallery);
 
     const btnAdd = document.querySelector(".btn-add");
-    // btnAdd.classList.add("btn-add");
-    // btnAdd.textContent = "Ajouter une photo";
-    // modal.appendChild(btnAdd);
 
     modifyDiv.addEventListener("click", () => {
       modal.showModal();
@@ -156,7 +149,7 @@ window.addEventListener("load", () => {
         image.src = work.imageUrl;
 
         const figure = document.createElement("figure");
-        figure.dataset.category = work.categoryId;
+        figure.dataset.id = work.id;
 
         const trashIcon = document.createElement("i");
         trashIcon.classList.add("fa-solid");
@@ -165,31 +158,144 @@ window.addEventListener("load", () => {
         figure.appendChild(image);
         figure.appendChild(trashIcon);
         modalGallery.appendChild(figure);
+        // la suppression des travaux
+        trashIcon.addEventListener("click", (event) => {
+          const figure = event.target.parentElement;
+          const id = figure.dataset.id;
+          console.log(event.target.parentElement.dataset.id);
+          fetch("http://localhost:5678/api/works/" + id, {
+            method: "DELETE",
+            headers: {
+              "content-type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+          })
+            .then((response) => {
+              if (response.ok) figure.style.display = "none";
+              else throw new Error("impossible de supprimer le work");
+            })
 
-        // trashIcon.addEventListener("click", () => {
-        //   fetch("http://localhost:5678/api/works/1", {
-        //     method: "DELETE",
-        //     headers: {
-        //       "content-type": "application/json",
-        //     },
-        //     body: JSON.stringify(),
-        //   })
-        //     .then((response) => response.json())
-        //     .then((data) => {
-        //       deletework(data);
-        //     });
-        // });
-        // function deletework(data) {
-        //   data.forEach((work) => {
-        //     this;
-        //   });
-        // }
+            .catch((error) => {
+              console.log(error);
+            });
+        });
       });
     }
+    // la modal d'ajout des travaux
     const modalAddPhoto = document.querySelector(".modal-add");
     btnAdd.addEventListener("click", () => {
       modalAddPhoto.showModal();
       modal.close();
     });
+    const btnCloseAddModal = document.querySelector(".close-addmodal");
+    btnCloseAddModal.addEventListener("click", () => {
+      modalAddPhoto.close();
+    });
+    const bntReturn = document.querySelector(".fa-arrow-left");
+    bntReturn.addEventListener("click", () => {
+      modalAddPhoto.close();
+      modal.showModal();
+    });
+
+    fetch("http://localhost:5678/api/categories")
+      .then((response) => response.json())
+      .then((data) => {
+        createSelect(data);
+      })
+
+      .catch((error) => {
+        console.error(error);
+      });
+
+    previewPicture();
+
+    inputTitle.addEventListener("input", activateButton);
+    inputSelect.addEventListener("change", activateButton);
+    inputFile.addEventListener("change", activateButton);
   }
+});
+// ajouter les catégories dans le menu déroulant
+function createSelect(data) {
+  const inputSelect = document.getElementById("category-select");
+  data.forEach((select) => {
+    const option = document.createElement("option");
+    option.textContent = select.name;
+    option.dataset.id = select.id;
+    inputSelect.appendChild(option);
+  });
+}
+// ajouter un aperçu de l'image
+const imageInput = document.getElementById("add-image");
+const imagePreview = document.getElementById("image-preview");
+function previewPicture() {
+  imageInput.addEventListener("change", function () {
+    const file = this.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        imagePreview.src = e.target.result;
+      };
+
+      reader.readAsDataURL(file);
+    }
+    imageLoaded.style.display = "none";
+    imagePreview.style.display = "block";
+  });
+  const imageLoaded = document.querySelector(".image-loaded");
+}
+// activer le bouton valider
+const inputTitle = document.getElementById("titre");
+const inputSelect = document.getElementById("category-select");
+const btnSubmit = document.getElementById("btn-submit");
+const inputFile = document.getElementById("add-image");
+
+function activateButton() {
+  if (
+    inputTitle.value.trim() !== "" &&
+    inputSelect.value !== "" &&
+    inputFile.value !== ""
+  ) {
+    btnSubmit.disabled = false;
+    btnSubmit.style.backgroundColor = "#1D6154";
+  } else {
+    btnSubmit.disabled = true;
+    btnSubmit.style.backgroundColor = "#A7A7A7";
+  }
+}
+// Ajout du work dans le backend
+const form = document.getElementById("add-form");
+
+form.addEventListener("submit", function (event) {
+  event.preventDefault();
+  const imageUrl = `http://localhost:5678/images/${inputFile.files[0].name}`;
+  const lastWork = document.querySelector(".modal-gallery figure:last-child");
+  const id = parseInt(lastWork.dataset.id) + 1;
+  console.log(id);
+  const categoryId = document.querySelector("#category-select option");
+  console.log(categoryId.dataset.id);
+  const formData = new FormData(this);
+  formData.append("imageUrl", imageUrl);
+  formData.append("categoryId", categoryId);
+  const request = new XMLHttpRequest();
+
+  request.open("POST", "http://localhost:5678/api/works");
+  formData.append("id", id);
+  formData.append("userId", 1);
+
+  request.send(formData);
+  fetch("http://localhost:5678/api/works", {
+    method: "POST",
+    body: formData,
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(formData);
+      console.log(data);
+    })
+
+    .catch((error) => {
+      console.error(error);
+    });
 });

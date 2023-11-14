@@ -60,35 +60,38 @@
       <section id="portfolio">
         <div class="title-container"><h2>Mes Projets</h2></div>
         <dialog class="modal">
-          <i class="fa-solid fa-xmark close-modal"></i>
-          <h1>Galerie photo</h1>
-          <div class="modal-gallery"></div>
-          <button class="btn-add">Ajouter une photo</button>
+          <div class="modal-container">
+            <i class="fa-solid fa-xmark close-modal"></i>
+            <h1>Galerie photo</h1>
+            <div class="modal-gallery"></div>
+            <button class="btn-add">Ajouter une photo</button>
+          </div>
         </dialog>
         <dialog class="modal-add">
-          <i class="fa-solid fa-xmark close-modal"></i>
-          <a href="#"><i class="fa-solid fa-arrow-left"></i></a>
+          <i class="fa-solid fa-xmark close-addmodal"></i>
+          <i class="fa-solid fa-arrow-left"></i>
           <div class="add-container">
             <h1>Ajout photo</h1>
             <div class="new-photo-container">
-              <i class="fa-regular fa-image"></i>
-              <input type="file" value="+ Ajouter photo" />
-              <p>jpg, png : 4mo max</p>
+              <div class="image-loaded">
+                <i class="fa-regular fa-image"></i>
+                <button class="add-file">+ Ajouter photo</button>
+                <p>jpg, png : 4mo max</p>
+                <input type="file" id="add-image" accept="image/*" />
+              </div>
+              <img id="image-preview" src="#" />
             </div>
-            <form>
-              <label for="titre">Titre</label>
-              <input type="text" name="titre" />
-              <label for="category">Catégorie</label>
-              <select name="category" id="category-select">
-                <option value=""></option>
-                <option value="Objets">Objets</option>
-                <option value="Appartements">Appartements</option>
-                <option value="Hotels & restaurants">
-                  Hotels & restaurants
-                </option>
-              </select>
+            <form action="" method="post" id="add-form">
+              <div class="form-container">
+                <label for="title">Titre</label>
+                <input type="text" name="title" id="titre" />
+                <label for="category">Catégorie</label>
+                <select name="category" id="category-select">
+                  <option></option>
+                </select>
+              </div>
+              <input type="submit" value="Valider" id="btn-submit" disabled />
             </form>
-            <input type="submit" value="Valider" />
           </div>
         </dialog>
         <div id="filtres"></div>

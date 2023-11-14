@@ -242,6 +242,7 @@ li:hover {
   line-height: 2;
   font-family: Work Sans;
   font-size: 14px;
+  cursor: pointer;
 }
 .modal {
   width: 630px;
@@ -249,7 +250,9 @@ li:hover {
   border-radius: 10px;
   border: none;
   text-align: left;
-
+  overflow: hidden;
+}
+.modal-container {
   display: flex;
   flex-direction: column;
 }
@@ -258,13 +261,11 @@ li:hover {
   text-align: center;
   font-family: Work Sans;
   font-size: 26px;
-
   font-weight: 400;
 }
 .close-modal {
   border: none;
   position: relative;
-
   top: 10px;
   left: 96%;
   font-size: 20px;
@@ -305,13 +306,13 @@ li:hover {
   padding: 5px;
   margin-bottom: 25px;
   width: 250px;
-  height: 55px;
+  height: 40px;
   text-align: center;
   border-radius: 60px;
-
   font-size: 1.2em;
   border: none;
   box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+  cursor: pointer;
 }
 .modal-add {
   width: 630px;
@@ -319,6 +320,19 @@ li:hover {
   border-radius: 10px;
   border: none;
   text-align: left;
+  overflow: hidden;
+}
+.close-addmodal {
+  border: none;
+  position: relative;
+
+  top: 0px;
+  left: 96%;
+  font-size: 20px;
+}
+.fa-arrow-left {
+  font-size: 25px;
+  margin-top: 2px;
 }
 .add-container {
   display: flex;
@@ -335,6 +349,15 @@ li:hover {
   margin-bottom: 35px;
   font-weight: 400;
 }
+.modal-add p {
+  color: #444;
+  text-align: center;
+  font-family: Work Sans;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
 .new-photo-container {
   display: flex;
   flex-direction: column;
@@ -346,14 +369,21 @@ li:hover {
   border-radius: 3px;
   background: #e8f1f6;
 }
+.image-loaded {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 .fa-image {
   width: 76px;
   height: 76px;
   flex-shrink: 0;
   color: #b9c5cc;
   font-size: 70px;
+  margin-top: 30px;
 }
-input[type="file"]::file-selector-button {
+input[type="file"] {
   background-color: #cbd6dc;
   width: 173px;
   height: 36px;
@@ -361,8 +391,37 @@ input[type="file"]::file-selector-button {
   border-radius: 50px;
   background: #cbd6dc;
   border: none;
+  opacity: 0;
+  position: relative;
+  bottom: 55px;
+}
+.add-file {
+  width: 173px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 50px;
+  background: #cbd6dc;
+  border: none;
+  margin-bottom: 10px;
+  color: #306685;
+  font-family: Work Sans;
+  font-size: 14px;
+}
+.new-photo-container img {
+  width: 129px;
+  height: 100%;
+  flex-shrink: 0;
+  position: relative;
+  bottom: 0;
+  left: 0;
+  display: none;
 }
 .add-container form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.form-container {
   display: flex;
   flex-direction: column;
   width: 100%;
