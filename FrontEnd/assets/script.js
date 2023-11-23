@@ -119,7 +119,7 @@ window.addEventListener("load", () => {
     modifyDiv.appendChild(modifyIcon);
     modifyDiv.appendChild(modifyBtn);
 
-    // *****la modal de suppression des traveaux***** \\
+    // *****la modal de suppression des travaux***** \\
     const closeModal = document.querySelector(".close-modal");
     const modalGallery = document.querySelector(".modal-gallery");
     const btnAdd = document.querySelector(".btn-add");
@@ -132,7 +132,14 @@ window.addEventListener("load", () => {
     });
 
     fetch("http://localhost:5678/api/works")
-      .then((response) => response.json())
+      .then((response) => {
+        if (response.ok) return response.json();
+        else {
+          throw new Error(
+            "Une erreur est survenue lors de la récupération des travaux"
+          );
+        }
+      })
       .then((data) => {
         createModalGallery(data);
       })
