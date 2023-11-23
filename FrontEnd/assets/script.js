@@ -201,7 +201,7 @@ window.addEventListener("load", () => {
     const btnCloseAddModal = document.querySelector(".close-addmodal");
     btnCloseAddModal.addEventListener("click", () => {
       modalAddPhoto.close();
-      imageLoaded.style.display = "flex";
+      inputContainer.style.display = "flex";
       imagePreview.style.display = "none";
       form.reset();
     });
@@ -209,7 +209,7 @@ window.addEventListener("load", () => {
     bntReturn.addEventListener("click", () => {
       modalAddPhoto.close();
       modal.showModal();
-      imageLoaded.style.display = "flex";
+      inputContainer.style.display = "flex";
       imagePreview.style.display = "none";
       form.reset();
     });
@@ -236,7 +236,7 @@ window.addEventListener("load", () => {
     // ajouter un aperçu de l'image
     const imageInput = document.getElementById("add-image");
     const imagePreview = document.getElementById("image-preview");
-    const inputContainer = document.querySelector("input-container");
+    const inputContainer = document.querySelector(".input-container");
     function previewPicture() {
       imageInput.addEventListener("change", function () {
         const file = this.files[0];
@@ -300,7 +300,7 @@ window.addEventListener("load", () => {
           modalAddPhoto.close();
           modal.showModal();
 
-          imageLoaded.style.display = "flex";
+          inputContainer.style.display = "flex";
           imagePreview.style.display = "none";
           form.reset();
         })
