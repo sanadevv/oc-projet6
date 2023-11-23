@@ -371,7 +371,7 @@ li:hover {
   border-radius: 3px;
   background: #e8f1f6;
 }
-.image-loaded {
+.input-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
