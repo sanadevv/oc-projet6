@@ -1,6 +1,9 @@
 const gallery = document.querySelector(".gallery");
 const modalGallery = document.querySelector(".modal-gallery");
-// *******creation de la galerie******
+const modalAddPhoto = document.querySelector(".modal-add");
+const modal = document.querySelector("dialog");
+
+// *******création de la galerie****** \\
 fetch("http://localhost:5678/api/works")
   .then((response) => response.json())
   .then((data) => {
@@ -11,21 +14,24 @@ fetch("http://localhost:5678/api/works")
     console.error(error);
   });
 
-// fonction pour créer la galerie dynamiquement
 function createGallery(data) {
   data.forEach((work) => {
-    const image = document.createElement("img");
-    image.src = work.imageUrl;
-    const titre = document.createElement("figcaption");
-    titre.textContent = work.title;
-    const figure = document.createElement("figure");
-    figure.dataset.category = work.categoryId;
-    figure.appendChild(image);
-    figure.appendChild(titre);
-    gallery.appendChild(figure);
+    createWorkInGallery(work);
   });
 }
-// ******creation des filtres******
+function createWorkInGallery(work) {
+  const image = document.createElement("img");
+  image.src = work.imageUrl;
+  const titre = document.createElement("figcaption");
+  titre.textContent = work.title;
+  const figure = document.createElement("figure");
+  figure.dataset.category = work.categoryId;
+  figure.dataset.id = work.id;
+  figure.appendChild(image);
+  figure.appendChild(titre);
+  gallery.appendChild(figure);
+}
+// ******creation des filtres****** \\
 fetch("http://localhost:5678/api/categories")
   .then((response) => response.json())
   .then((data) => {
@@ -36,8 +42,6 @@ fetch("http://localhost:5678/api/categories")
     console.error(error);
   });
 
-// fonction pour créer les boutons filtres dynamiquement
-
 function createFilters(data) {
   data.unshift({ id: 0, name: "Tous" });
   const filtres = document.getElementById("filtres");
@@ -45,9 +49,7 @@ function createFilters(data) {
     const btnfiltre = document.createElement("button");
     btnfiltre.textContent = filter.name;
     btnfiltre.dataset.id = filter.id;
-
     filtres.appendChild(btnfiltre);
-
     btnfiltre.addEventListener("click", filterFigure);
     btnfiltre.addEventListener("click", setActiveButton);
     btnfiltre.classList.add("not-selected");
@@ -77,12 +79,12 @@ function setActiveButton() {
   this.classList.add("selected");
   this.classList.remove("not-selected");
 }
-// ******la page d'acceuil aprés la connexion de l'administrateur******
+// ******la page d'acceuil aprés la connexion de l'administrateur****** \\
 window.addEventListener("load", () => {
   const token = sessionStorage.getItem("authToken");
 
   if (token) {
-    // modification de la page d'acceuil aprés connexion
+    // modification de la page d'acceuil aprés la connexion
     document.getElementById("filtres").style.display = "none";
 
     const login = document.querySelector(".login");
@@ -100,9 +102,9 @@ window.addEventListener("load", () => {
     editionDiv.appendChild(editionIcon);
 
     const editionText = document.createElement("p");
-    editionDiv.appendChild(editionText);
     editionText.textContent = "Mode édition";
     editionText.classList.add("edition-text");
+    editionDiv.appendChild(editionText);
 
     const modifyDiv = document.createElement("div");
     document.querySelector(".title-container").appendChild(modifyDiv);
@@ -116,13 +118,10 @@ window.addEventListener("load", () => {
     modifyIcon.classList.add("fa-pen-to-square");
     modifyDiv.appendChild(modifyIcon);
     modifyDiv.appendChild(modifyBtn);
-    // la modal suppression des traveaux
-    const modal = document.querySelector("dialog");
 
+    // *****la modal de suppression des traveaux***** \\
     const closeModal = document.querySelector(".close-modal");
-
     const modalGallery = document.querySelector(".modal-gallery");
-
     const btnAdd = document.querySelector(".btn-add");
 
     modifyDiv.addEventListener("click", () => {
@@ -135,54 +134,66 @@ window.addEventListener("load", () => {
     fetch("http://localhost:5678/api/works")
       .then((response) => response.json())
       .then((data) => {
-        createGallery(data);
+        createModalGallery(data);
       })
 
       .catch((error) => {
         console.error(error);
       });
 
-    // fonction pour créer la galerie dynamiquement
-    function createGallery(data) {
+    function createModalGallery(data) {
       data.forEach((work) => {
-        const image = document.createElement("img");
-        image.src = work.imageUrl;
-
-        const figure = document.createElement("figure");
-        figure.dataset.id = work.id;
-
-        const trashIcon = document.createElement("i");
-        trashIcon.classList.add("fa-solid");
-        trashIcon.classList.add("fa-trash-can");
-
-        figure.appendChild(image);
-        figure.appendChild(trashIcon);
-        modalGallery.appendChild(figure);
-        // la suppression des travaux
-        trashIcon.addEventListener("click", (event) => {
-          const figure = event.target.parentElement;
-          const id = figure.dataset.id;
-          console.log(event.target.parentElement.dataset.id);
-          fetch("http://localhost:5678/api/works/" + id, {
-            method: "DELETE",
-            headers: {
-              "content-type": "application/json",
-              Authorization: "Bearer " + token,
-            },
-          })
-            .then((response) => {
-              if (response.ok) figure.style.display = "none";
-              else throw new Error("impossible de supprimer le work");
-            })
-
-            .catch((error) => {
-              console.log(error);
-            });
-        });
+        createWorkInModalGallery(work);
       });
     }
-    // la modal d'ajout des travaux
-    const modalAddPhoto = document.querySelector(".modal-add");
+    function createWorkInModalGallery(work) {
+      const image = document.createElement("img");
+      image.src = work.imageUrl;
+
+      const figure = document.createElement("figure");
+      figure.dataset.id = work.id;
+
+      const trashIcon = document.createElement("i");
+      trashIcon.classList.add("fa-solid");
+      trashIcon.classList.add("fa-trash-can");
+
+      figure.appendChild(image);
+      figure.appendChild(trashIcon);
+      modalGallery.appendChild(figure);
+
+      // la suppression des travaux
+      trashIcon.addEventListener("click", (event) => {
+        const figure = event.target.parentElement;
+        const id = figure.dataset.id;
+        deleteWork(id, figure);
+      });
+    }
+    function deleteWork(id, figure) {
+      const token = sessionStorage.getItem("authToken");
+      fetch("http://localhost:5678/api/works/" + id, {
+        method: "DELETE",
+        headers: {
+          "content-type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      })
+        .then((response) => {
+          if (response.ok) {
+            figure.style.display = "none";
+            const galleryFigure = document.querySelector(
+              `.gallery figure[data-id="${id}"]`
+            );
+            if (galleryFigure) {
+              galleryFigure.style.display = "none";
+            }
+          } else throw new Error("impossible de supprimer le travail");
+        })
+
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+    // *****la modal d'ajout des travaux***** \\
     btnAdd.addEventListener("click", () => {
       modalAddPhoto.showModal();
       modal.close();
@@ -190,13 +201,19 @@ window.addEventListener("load", () => {
     const btnCloseAddModal = document.querySelector(".close-addmodal");
     btnCloseAddModal.addEventListener("click", () => {
       modalAddPhoto.close();
+      imageLoaded.style.display = "flex";
+      imagePreview.style.display = "none";
+      form.reset();
     });
     const bntReturn = document.querySelector(".fa-arrow-left");
     bntReturn.addEventListener("click", () => {
       modalAddPhoto.close();
       modal.showModal();
+      imageLoaded.style.display = "flex";
+      imagePreview.style.display = "none";
+      form.reset();
     });
-
+    // ajouter les catégories dans le menu déroulant
     fetch("http://localhost:5678/api/categories")
       .then((response) => response.json())
       .then((data) => {
@@ -207,95 +224,90 @@ window.addEventListener("load", () => {
         console.error(error);
       });
 
+    function createSelect(data) {
+      const inputSelect = document.getElementById("category-select");
+      data.forEach((select) => {
+        const option = document.createElement("option");
+        option.textContent = select.name;
+        option.value = select.id;
+        inputSelect.appendChild(option);
+      });
+    }
+    // ajouter un aperçu de l'image
+    const imageInput = document.getElementById("add-image");
+    const imagePreview = document.getElementById("image-preview");
+    const inputContainer = document.querySelector("input-container");
+    function previewPicture() {
+      imageInput.addEventListener("change", function () {
+        const file = this.files[0];
+
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            imagePreview.src = e.target.result;
+          };
+
+          reader.readAsDataURL(file);
+        }
+        inputContainer.style.display = "none";
+        imagePreview.style.display = "block";
+      });
+    }
     previewPicture();
 
+    // activer le bouton valider
+    const inputTitle = document.getElementById("titre");
+    const inputSelect = document.getElementById("category-select");
+    const btnSubmit = document.getElementById("btn-submit");
+    const inputFile = document.getElementById("add-image");
+
+    function activateButton() {
+      if (
+        inputTitle.value.trim() !== "" &&
+        inputSelect.value !== "" &&
+        inputFile.value !== ""
+      ) {
+        btnSubmit.disabled = false;
+        btnSubmit.style.backgroundColor = "#1D6154";
+      } else {
+        btnSubmit.disabled = true;
+        btnSubmit.style.backgroundColor = "#A7A7A7";
+      }
+    }
     inputTitle.addEventListener("input", activateButton);
     inputSelect.addEventListener("change", activateButton);
     inputFile.addEventListener("change", activateButton);
-  }
-});
-// ajouter les catégories dans le menu déroulant
-function createSelect(data) {
-  const inputSelect = document.getElementById("category-select");
-  data.forEach((select) => {
-    const option = document.createElement("option");
-    option.textContent = select.name;
-    option.dataset.id = select.id;
-    inputSelect.appendChild(option);
-  });
-}
-// ajouter un aperçu de l'image
-const imageInput = document.getElementById("add-image");
-const imagePreview = document.getElementById("image-preview");
-function previewPicture() {
-  imageInput.addEventListener("change", function () {
-    const file = this.files[0];
+    // Ajout d'un nouveau travail
+    const form = document.getElementById("add-form");
 
-    if (file) {
-      const reader = new FileReader();
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const formData = new FormData(this);
 
-      reader.onload = function (e) {
-        imagePreview.src = e.target.result;
-      };
+      formData.append("image", inputFile.files[0]);
+      const token = sessionStorage.getItem("authToken");
+      fetch("http://localhost:5678/api/works", {
+        method: "POST",
+        body: formData,
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          createWorkInGallery(data);
+          createWorkInModalGallery(data);
+          modalAddPhoto.close();
+          modal.showModal();
 
-      reader.readAsDataURL(file);
-    }
-    imageLoaded.style.display = "none";
-    imagePreview.style.display = "block";
-  });
-  const imageLoaded = document.querySelector(".image-loaded");
-}
-// activer le bouton valider
-const inputTitle = document.getElementById("titre");
-const inputSelect = document.getElementById("category-select");
-const btnSubmit = document.getElementById("btn-submit");
-const inputFile = document.getElementById("add-image");
+          imageLoaded.style.display = "flex";
+          imagePreview.style.display = "none";
+          form.reset();
+        })
 
-function activateButton() {
-  if (
-    inputTitle.value.trim() !== "" &&
-    inputSelect.value !== "" &&
-    inputFile.value !== ""
-  ) {
-    btnSubmit.disabled = false;
-    btnSubmit.style.backgroundColor = "#1D6154";
-  } else {
-    btnSubmit.disabled = true;
-    btnSubmit.style.backgroundColor = "#A7A7A7";
-  }
-}
-// Ajout du work dans le backend
-const form = document.getElementById("add-form");
-
-form.addEventListener("submit", function (event) {
-  event.preventDefault();
-  const imageUrl = `http://localhost:5678/images/${inputFile.files[0].name}`;
-  const lastWork = document.querySelector(".modal-gallery figure:last-child");
-  const id = parseInt(lastWork.dataset.id) + 1;
-  console.log(id);
-  const categoryId = document.querySelector("#category-select option");
-  console.log(categoryId.dataset.id);
-  const formData = new FormData(this);
-  formData.append("imageUrl", imageUrl);
-  formData.append("categoryId", categoryId);
-  const request = new XMLHttpRequest();
-
-  request.open("POST", "http://localhost:5678/api/works");
-  formData.append("id", id);
-  formData.append("userId", 1);
-
-  request.send(formData);
-  fetch("http://localhost:5678/api/works", {
-    method: "POST",
-    body: formData,
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(formData);
-      console.log(data);
-    })
-
-    .catch((error) => {
-      console.error(error);
+        .catch((error) => {
+          console.error(error);
+        });
     });
+  }
 });

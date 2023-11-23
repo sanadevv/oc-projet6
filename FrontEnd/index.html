@@ -73,11 +73,16 @@
           <div class="add-container">
             <h1>Ajout photo</h1>
             <div class="new-photo-container">
-              <div class="image-loaded">
+              <div class="input-container">
                 <i class="fa-regular fa-image"></i>
                 <button class="add-file">+ Ajouter photo</button>
                 <p>jpg, png : 4mo max</p>
-                <input type="file" id="add-image" accept="image/*" />
+                <input
+                  type="file"
+                  id="add-image"
+                  accept="image/jpg, image/png"
+                  max=""
+                />
               </div>
               <img id="image-preview" src="#" />
             </div>

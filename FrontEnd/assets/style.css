@@ -246,15 +246,16 @@ li:hover {
 }
 .modal {
   width: 630px;
-  /* height: 688px; */
+  /* height: auto; */
   border-radius: 10px;
   border: none;
   text-align: left;
-  overflow: hidden;
 }
 .modal-container {
   display: flex;
   flex-direction: column;
+  height: auto;
+  width: 620px;
 }
 .modal h1 {
   color: black;
@@ -269,19 +270,19 @@ li:hover {
   top: 10px;
   left: 96%;
   font-size: 20px;
+  cursor: pointer;
+  width: 20px;
 }
 .modal-gallery {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  row-gap: 20px;
+  row-gap: 15px;
   column-gap: 10px;
   margin: 50px 100px;
   border-bottom: 1px solid #b3b3b3;
   padding-bottom: 50px;
 }
-/* figure {
-  position: relative;
-} */
+
 .modal-gallery figure img {
   width: 100%;
 }
@@ -325,7 +326,7 @@ li:hover {
 .close-addmodal {
   border: none;
   position: relative;
-
+  cursor: pointer;
   top: 0px;
   left: 96%;
   font-size: 20px;
@@ -333,6 +334,7 @@ li:hover {
 .fa-arrow-left {
   font-size: 25px;
   margin-top: 2px;
+  cursor: pointer;
 }
 .add-container {
   display: flex;
@@ -394,6 +396,7 @@ input[type="file"] {
   opacity: 0;
   position: relative;
   bottom: 55px;
+  cursor: pointer;
 }
 .add-file {
   width: 173px;
@@ -406,6 +409,7 @@ input[type="file"] {
   color: #306685;
   font-family: Work Sans;
   font-size: 14px;
+  cursor: pointer;
 }
 .new-photo-container img {
   width: 129px;
@@ -456,6 +460,7 @@ input[type="file"] {
   text-align: center;
   justify-content: center;
   gap: 20px;
+  margin-top: 60px;
 }
 #portfolio #filtres {
   display: flex;
@@ -492,6 +497,7 @@ input[type="file"] {
   grid-template-columns: 1fr 1fr 1fr;
   grid-column-gap: 20px;
   grid-row-gap: 20px;
+  margin-top: 30px;
 }
 
 .gallery img {
@@ -537,6 +543,7 @@ input[type="submit"] {
   width: 180px;
   text-align: center;
   border-radius: 60px;
+  cursor: pointer;
 }
 #contact a {
   display: flex;
